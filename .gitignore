@@ -1,0 +1,5 @@
+target/
+it/work/
+it/repo/
+.gradle/
+build/

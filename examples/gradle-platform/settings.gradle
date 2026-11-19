@@ -1,0 +1,3 @@
+// Copyright 2026 the ltsboot contributors.
+// SPDX-License-Identifier: Apache-2.0
+rootProject.name = 'lts-gradle-platform-example'

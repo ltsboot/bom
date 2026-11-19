@@ -1,0 +1,12 @@
+<!-- Copyright 2026 the ltsboot contributors. SPDX-License-Identifier: Apache-2.0 -->
+<settings>
+  <profiles>
+    <profile>
+      <id>lts-it</id>
+      <activation><activeByDefault>true</activeByDefault></activation>
+      <repositories>
+        <repository><id>lts-it</id><url>file:///work/it/repo</url></repository>
+      </repositories>
+    </profile>
+  </profiles>
+</settings>
