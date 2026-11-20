@@ -1,0 +1,7 @@
+// Copyright 2026 the ltsboot contributors. SPDX-License-Identifier: Apache-2.0
+// T-4.5.3: mockk 1.12.4 declares Kotlin 1.6.0, i.e. below the managed 1.6.21: a plain platform() resolves 1.6.21 for it.
+dependencies {
+	implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+	implementation 'org.jetbrains.kotlin:kotlin-reflect'
+	testImplementation 'io.mockk:mockk:1.12.4'
+}

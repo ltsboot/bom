@@ -1,0 +1,38 @@
+// Copyright 2026 the ltsboot contributors. SPDX-License-Identifier: Apache-2.0
+//
+// T-4.5: Gradle consumers of lts-dependencies in the three ways a Boot 2.7 build can apply a BOM:
+//   -PbomMode=platform   plain platform(...)            (no Boot plugin, constraints, highest version wins)
+//   -PbomMode=enforced   enforcedPlatform(...)          (constraints are strict)
+//   -PbomMode=depmgmt    io.spring.dependency-management + mavenBom(...)   (what the Boot Gradle plugin users have)
+//   -PbomMode=boot       CONTROL: plain platform() of Boot 2.7.18's own BOM (shows which behaviours are inherited from Boot)
+// -PltsRepo=file:///work/it/repo points at the throw-away repository created by it/verify-maven.sh.
+plugins {
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE' apply false
+}
+
+def mode = findProperty('bomMode') ?: 'platform'
+def bom = mode == 'boot' ? 'org.springframework.boot:spring-boot-dependencies:2.7.18' : 'io.github.ltsboot:lts-dependencies:2.7.18.1'
+
+subprojects {
+	apply plugin: 'java'
+	repositories {
+		if (rootProject.hasProperty('ltsRepo')) {
+			maven { url = uri(rootProject.property('ltsRepo')) }
+		}
+		mavenCentral()
+	}
+	java {
+		sourceCompatibility = JavaVersion.VERSION_1_8
+		targetCompatibility = JavaVersion.VERSION_1_8
+	}
+	if (mode == 'depmgmt') {
+		apply plugin: 'io.spring.dependency-management'
+		dependencyManagement { imports { mavenBom bom } }
+	}
+	else {
+		dependencies {
+			implementation(mode == 'enforced' ? enforcedPlatform(bom) : platform(bom))
+			testImplementation(mode == 'enforced' ? enforcedPlatform(bom) : platform(bom))
+		}
+	}
+}

@@ -1,0 +1,7 @@
+// Copyright 2026 the ltsboot contributors. SPDX-License-Identifier: Apache-2.0
+// T-4.5.5: thymeleaf-layout-dialect 3.4.0 (Groovy 4) next to an application that also has Groovy 3 (e.g. Spock).
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+	testImplementation 'org.codehaus.groovy:groovy'
+}

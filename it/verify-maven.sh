@@ -6,6 +6,8 @@
 #   2. control app (spring-boot-starter-parent 2.7.18), parent app (lts-starter-parent) and BOM app (import lts-dependencies):
 #      `dependency:tree` + `package` (compiles a tiny class)
 #   3. asserts the ADR-004 default versions and the absence of org.lz4 / mchange
+#   4. T-4.5 behaviour ITs (they RUN code): logging bridge reaches logback, Kotlin 1.6 + jackson-module-kotlin on Jackson 2.18,
+#      thymeleaf-layout-dialect renders on its own Groovy 4; c3p0 app keeps mchange-commons-java
 # Usage: it/verify-maven.sh [jdk: 8|11|17 (default 8)]     Logs: it/work/maven-<app>.tree.txt
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")/.." && pwd)"; JDK="${1:-8}"; OUT="$HERE/it/work"
@@ -18,6 +20,12 @@ mvn_run() { # <workdir inside /work> <mvn args...>
 }
 mvn_run . -q verify
 mvn_run . -q deploy -DaltDeploymentRepository=lts-it::default::file:///work/it/repo
+for t in logging kotlin layout; do
+  mvn_run it/maven-$t-app test > "$OUT/maven-$t.test.log" 2>&1 || { tail -40 "$OUT/maven-$t.test.log"; exit 1; }
+  grep -E 'Tests run:.*Fail' "$OUT/maven-$t.test.log" | tail -1 | sed "s/^/[$t] /"
+  mvn_run it/maven-$t-app dependency:tree -DoutputFile=/work/it/work/maven-$t.tree.txt > "$OUT/maven-$t.tree.log" 2>&1 || { tail -40 "$OUT/maven-$t.tree.log"; exit 1; }
+done
+mvn_run it/maven-c3p0-app dependency:tree -DoutputFile=/work/it/work/maven-c3p0.tree.txt > "$OUT/maven-c3p0.tree.log" 2>&1 || { tail -40 "$OUT/maven-c3p0.tree.log"; exit 1; }
 for app in control parent bom; do
   mvn_run it/maven-$app-app package -DskipTests > "$OUT/maven-$app.package.log" 2>&1 || { tail -40 "$OUT/maven-$app.package.log"; exit 1; }
   mvn_run it/maven-$app-app dependency:tree -DoutputFile=/work/it/work/maven-$app.tree.txt > "$OUT/maven-$app.tree.log" 2>&1 || { tail -40 "$OUT/maven-$app.tree.log"; exit 1; }
@@ -47,5 +55,16 @@ done
 expect control 'org\.lz4:lz4-java:jar:1\.8\.0' 'control still has org.lz4:lz4-java 1.8.0 (sanity)'
 expect control 'mchange-commons-java' 'control still has mchange-commons-java (sanity)'
 expect control 'jackson-databind:jar:2\.13\.5' 'control still has jackson 2.13.5 (sanity)'
+expect logging 'log4j-to-slf4j:jar:2\.21\.1' 'logging: log4j-to-slf4j 2.21.1 (declares slf4j-api 1.7)'
+expect logging 'log4j-api:jar:2\.25\.5' 'logging: log4j-api 2.25.5'
+expect logging 'slf4j-api:jar:1\.7\.36' 'logging: slf4j-api 1.7.36'
+absent logging 'slf4j-api:jar:2\.' 'logging: no slf4j-api 2.x'
+expect kotlin 'jackson-module-kotlin:jar:2\.17\.3' 'kotlin: jackson-module-kotlin 2.17.3 (Kotlin 1.7 metadata)'
+expect kotlin 'jackson-databind:jar:2\.18\.12' 'kotlin: jackson-databind 2.18.12'
+expect kotlin 'kotlin-stdlib:jar:1\.6\.21' 'kotlin: kotlin-stdlib 1.6.21'
+expect layout 'thymeleaf-layout-dialect:jar:3\.4\.0' 'layout: layout-dialect 3.4.0'
+expect layout 'org\.apache\.groovy:groovy:jar:4\.' 'layout: Groovy 4 (own)'
+absent layout 'org\.codehaus\.groovy' 'layout: no Groovy 3'
+expect c3p0 'mchange-commons-java:jar:' 'c3p0: mchange-commons-java stays for c3p0 users'
 echo "--- selected lines (parent app)"; grep -E 'jackson-databind|thymeleaf:|activemq-client|lz4|nimbus-jose-jwt|mchange|quartz|tomcat-embed-core' "$OUT/maven-parent.tree.txt" || true
 exit $fail

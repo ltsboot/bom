@@ -37,11 +37,9 @@ dependencies {
 	implementation 'org.springframework.kafka:spring-kafka'
 }
 
-// 3. Gradle ignores the <exclusions> that lts-dependencies declares for Maven. Declare the one that matters here:
-//    mchange-commons-java is only pulled in by Quartz (ADR-004); Boot already drops c3p0.
-configurations.configureEach {
-	exclude group: 'com.mchange', module: 'mchange-commons-java'
-}
+// 3. mchange-commons-java (Quartz): no rule needed. Gradle 7.6.3 applies the <exclusions> that lts-dependencies declares on the Quartz entry,
+//    and only there: an application that uses c3p0 itself keeps mchange-commons-java (verified by it/gradle-consumers/verify.sh).
+//    Do NOT add a blanket `configurations.configureEach { exclude group: 'com.mchange' }`: it breaks c3p0 (IllegalAccessError, T-4.5.8).
 
 // 4. lz4-java moved to the groupId at.yawk.lz4 (ADR-004). The new artifact declares the old capability org.lz4:lz4-java, so
 //    Kafka's request for org.lz4:lz4-java and the platform's at.yawk.lz4 constraint collide: pick the maintained one.

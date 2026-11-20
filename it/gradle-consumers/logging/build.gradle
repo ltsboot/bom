@@ -1,0 +1,9 @@
+// Copyright 2026 the ltsboot contributors. SPDX-License-Identifier: Apache-2.0
+// T-4.5.7: same regression test as it/maven-logging-app (shared source).
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-logging'
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+	testImplementation 'org.assertj:assertj-core'
+}
+sourceSets { test { java.srcDir '../../maven-logging-app/src/test/java' } }
+test { useJUnitPlatform() }

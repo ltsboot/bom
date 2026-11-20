@@ -77,6 +77,10 @@
     <lz4-java-relocation.version>1.8.1</lz4-java-relocation.version>
     <!-- ADR-004 s6: transitive of Undertow -->
     <xnio.version>3.8.16.Final</xnio.version>
+    <!-- T-4.5.7: log4j-to-slf4j 2.22+ DECLARES slf4j-api 2.0.x (it still runs on 1.7 at runtime, support range [1.7,3), but a Gradle consumer resolves the declared 2.0.x, which Boot 2.7's logback 1.2 cannot bind: logging silently dead). 2.21.1 is the last release that declares slf4j-api 1.7.36. Only the bridge is pinned: log4j-api/-core/-jul/-slf4j-impl stay on log4j2.version (the CVEs are in log4j-api/-core, not in the bridge) -->
+    <log4j-to-slf4j.version>2.21.1</log4j-to-slf4j.version>
+    <!-- T-4.5.10: jackson-module-kotlin 2.18.x ships Kotlin 1.8.0 metadata, which the Kotlin 1.6.21 compiler of Boot 2.7 cannot read (every Kotlin 1.6 module that has it on the compile classpath fails). 2.17.3 ships 1.7.1 metadata (readable by 1.6.x) and runs on jackson-databind/-core 2.18.12 (verified with the webflux-kotlin-coroutines compat app). No CVE is open against this module -->
+    <jackson-module-kotlin.version>2.17.3</jackson-module-kotlin.version>
     <!-- same value as Boot 2.7.18 (needed because a BOM cannot read Boot's properties) -->
     <quartz.version>2.3.2</quartz.version>
   </properties>
@@ -462,6 +466,16 @@
         <groupId>org.lz4</groupId>
         <artifactId>lz4-java</artifactId>
         <version>${lz4-java-relocation.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-to-slf4j</artifactId>
+        <version>${log4j-to-slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.module</groupId>
+        <artifactId>jackson-module-kotlin</artifactId>
+        <version>${jackson-module-kotlin.version}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.xnio</groupId>

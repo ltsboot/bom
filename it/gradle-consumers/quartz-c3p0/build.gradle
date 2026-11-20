@@ -1,0 +1,6 @@
+// Copyright 2026 the ltsboot contributors. SPDX-License-Identifier: Apache-2.0
+// T-4.5.8: a c3p0 user keeps mchange-commons-java (c3p0 needs it); the BOM's exclusion is attached to the Quartz entry only.
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-quartz'
+	implementation 'com.mchange:c3p0:0.9.5.5'
+}

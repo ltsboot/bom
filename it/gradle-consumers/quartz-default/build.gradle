@@ -1,0 +1,5 @@
+// Copyright 2026 the ltsboot contributors. SPDX-License-Identifier: Apache-2.0
+// T-4.5.8: Quartz starter with NO consumer-side exclusion: Gradle applies the exclusion declared in the BOM (verified on Gradle 7.6.3).
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-quartz'
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2026 the ltsboot contributors. SPDX-License-Identifier: Apache-2.0 -->
+<!-- T-4.5.8: the mchange-commons-java exclusion is attached to Quartz only; a c3p0 user keeps mchange-commons-java (c3p0 needs it). -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>example</groupId><artifactId>c3p0-app</artifactId><version>1.0</version>
+  <properties><maven.compiler.source>8</maven.compiler.source><maven.compiler.target>8</maven.compiler.target></properties>
+  <dependencyManagement><dependencies>
+    <dependency><groupId>io.github.ltsboot</groupId><artifactId>lts-dependencies</artifactId><version>2.7.18.1</version><type>pom</type><scope>import</scope></dependency>
+  </dependencies></dependencyManagement>
+  <dependencies>
+    <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-quartz</artifactId></dependency>
+    <dependency><groupId>com.mchange</groupId><artifactId>c3p0</artifactId><version>0.9.5.5</version></dependency>
+  </dependencies>
+</project>

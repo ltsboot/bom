@@ -1,0 +1,8 @@
+// Copyright 2026 the ltsboot contributors. SPDX-License-Identifier: Apache-2.0
+pluginManagement {
+	repositories {
+		gradlePluginPortal()
+	}
+}
+rootProject.name = 'gradle-consumers'
+include 'logging', 'kotlin-mockk', 'kotlin-mockk-1124', 'quartz-default', 'quartz-c3p0', 'elasticsearch-java', 'layout-dialect'

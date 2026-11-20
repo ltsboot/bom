@@ -52,13 +52,24 @@ NEW_PROPS = [
      "ADR-004 s6: org.lz4:lz4-java 1.8.1 is a Sonatype relocation POM to at.yawk.lz4:lz4-java; managing it makes Maven follow "
      "the relocation for kafka-clients etc. (instead of excluding lz4, which would leave Kafka without lz4)"),
     ("xnio.version", "3.8.16.Final", "ADR-004 s6: transitive of Undertow"),
+    ("log4j-to-slf4j.version", "2.21.1",
+     "T-4.5.7: log4j-to-slf4j 2.22+ DECLARES slf4j-api 2.0.x (it still runs on 1.7 at runtime, support range [1.7,3), but a Gradle consumer "
+     "resolves the declared 2.0.x, which Boot 2.7's logback 1.2 cannot bind: logging silently dead). 2.21.1 is the last release that "
+     "declares slf4j-api 1.7.36. Only the bridge is pinned: log4j-api/-core/-jul/-slf4j-impl stay on log4j2.version "
+     "(the CVEs are in log4j-api/-core, not in the bridge)"),
 ]
+NEW_PROPS.append(("jackson-module-kotlin.version", "2.17.3",
+     "T-4.5.10: jackson-module-kotlin 2.18.x ships Kotlin 1.8.0 metadata, which the Kotlin 1.6.21 compiler of Boot 2.7 cannot read (every "
+     "Kotlin 1.6 module that has it on the compile classpath fails). 2.17.3 ships 1.7.1 metadata (readable by 1.6.x) and runs on "
+     "jackson-databind/-core 2.18.12 (verified with the webflux-kotlin-coroutines compat app). No CVE is open against this module"))
 NEW_DEPS = [  # (groupId, artifactId, version property, exclusions)
     ("com.nimbusds", "nimbus-jose-jwt", "nimbus-jose-jwt.version", []),
     ("org.eclipse.parsson", "parsson", "parsson.version", []),
     ("commons-beanutils", "commons-beanutils", "commons-beanutils.version", []),
     ("at.yawk.lz4", "lz4-java", "lz4-java.version", []),
     ("org.lz4", "lz4-java", "lz4-java-relocation.version", []),
+    ("org.apache.logging.log4j", "log4j-to-slf4j", "log4j-to-slf4j.version", []),
+    ("com.fasterxml.jackson.module", "jackson-module-kotlin", "jackson-module-kotlin.version", []),
     ("org.jboss.xnio", "xnio-api", "xnio.version", []),
     ("org.jboss.xnio", "xnio-nio", "xnio.version", []),
 ]

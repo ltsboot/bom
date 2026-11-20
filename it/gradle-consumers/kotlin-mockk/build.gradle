@@ -1,0 +1,7 @@
+// Copyright 2026 the ltsboot contributors. SPDX-License-Identifier: Apache-2.0
+// T-4.5.3: mockk is not managed by Boot / lts-dependencies; 1.13.5 depends on kotlin-stdlib 1.8.20.
+dependencies {
+	implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+	implementation 'org.jetbrains.kotlin:kotlin-reflect'
+	testImplementation 'io.mockk:mockk:1.13.5'
+}
