@@ -51,6 +51,8 @@ for app in parent bom; do
   expect $app 'spring-security-core:jar:5\.7\.14' 'spring-security-core 5.7.14'
   expect $app 'reactor-core:jar:3\.4\.41' 'reactor-core 3.4.41 (Reactor 2020.0.47)'
   expect $app 'snakeyaml:jar:1\.33' 'snakeyaml 1.33'
+  expect $app 'xnio-nio:jar:3\.8\.14\.Final|xnio-api:jar:3\.8\.14\.Final' 'xnio 3.8.14 (T-4.5.15)'
+  expect $app 'com\.sun\.mail:jakarta\.mail:jar:1\.6\.8' 'com.sun.mail:jakarta.mail 1.6.8 (CVE-2025-7962, implementation)'
 done
 expect control 'org\.lz4:lz4-java:jar:1\.8\.0' 'control still has org.lz4:lz4-java 1.8.0 (sanity)'
 expect control 'mchange-commons-java' 'control still has mchange-commons-java (sanity)'

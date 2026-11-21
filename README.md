@@ -80,7 +80,7 @@ configurations.configureEach {
 | Spring LDAP | 2.4.1 | 2.4.4 | `spring-ldap.version` |
 | Tomcat | 9.0.83 | 9.0.124 | `tomcat.version` |
 | Netty | 4.1.101.Final | 4.1.141.Final | `netty.version` |
-| Undertow / XNIO | 2.2.28.Final / 3.8.7 | 2.2.41.Final / 3.8.16.Final | `undertow.version`, `xnio.version` (new) |
+| Undertow / XNIO | 2.2.28.Final / 3.8.7 | 2.2.41.Final / 3.8.14.Final (T-4.5.15: 3.8.15+ hangs on a failed bind) | `undertow.version`, `xnio.version` (new) |
 | Jetty | 9.4.53 | 9.4.58.v20250814 | `jetty.version` |
 | Jackson | 2.13.5 | 2.18.12 | `jackson-bom.version` |
 | jackson-module-kotlin | 2.13.5 | **2.17.3** (not 2.18.12) | `jackson-module-kotlin.version` (new) |
@@ -108,7 +108,7 @@ Set them in the application POM (parent users) or in `gradle.properties` (`ext[.
 
 | Property | Opt-in value | Effect / cost |
 |---|---|---|
-| `activemq.version` | `5.19.12` | Fixes 11 more high CVEs (incl. KEV CVE-2026-34197). **Needs Java 11.** |
+| `activemq.version` | `5.19.12` | Fixes 11 more high CVEs (incl. KEV CVE-2026-34197). **Needs Java 11.** On Java 8, apply the controls in `docs/mitigations/activemq-5.16.md` (workspace) |
 | `jackson-bom.version` | `2.15.4` | Smaller jump, but leaves 6 high + 6 medium CVEs open (ADR-004). |
 | `spring-security.version` | `5.8.16` | Not covered by the fork's backports, no extra CVE fix, 3 binary breaks (ADR-003 section 3). |
 | `spring-framework.version`, `spring-security.version` | `5.3.39.1`, `5.7.14.1` | The ltsboot fork line, once published (needs the fork repository and the relocator / ltsboot Gradle plugin, ADR-002/007/008). |

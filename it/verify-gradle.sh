@@ -29,6 +29,7 @@ absent 'mchange' 'no com.mchange artifact (quartz)'
 expect 'quartz:[0-9.]*' 'quartz present'
 expect 'tomcat-embed-core:[0-9.]* -> 9\.0\.124|tomcat-embed-core:9\.0\.124' 'tomcat-embed-core 9.0.124'
 expect 'spring-core:[0-9.]* -> 5\.3\.39|spring-core:5\.3\.39' 'spring-core 5.3.39'
+expect 'com\.sun\.mail:jakarta\.mail:[0-9.]* -> 1\.6\.8|com\.sun\.mail:jakarta\.mail:1\.6\.8' 'com.sun.mail:jakarta.mail 1.6.8 (CVE-2025-7962)'
 if grep -Eq "^jar: lz4-java-1\.8" "$OUT/gradle-jars.txt" || grep -Eq "^jar: mchange" "$OUT/gradle-jars.txt"; then echo "FAIL runtime jars contain org.lz4 / mchange"; fail=1; else echo "ok   runtime jars: no lz4-java-1.8.x, no mchange"; fi
 grep -E "^jar: (lz4|nimbus|jackson-databind|thymeleaf-3|activemq-client|quartz)" "$OUT/gradle-jars.txt" | sort
 echo "--- selected lines"; grep -E 'jackson-databind|thymeleaf:|activemq-client|lz4|nimbus-jose-jwt|mchange|quartz:|spring-core' "$OUT/gradle-deps.txt" | sort -u | head -30

@@ -65,6 +65,8 @@
     <assertj.version>3.27.7</assertj.version>
     <!-- ADR-004 -->
     <jakarta-mail.version>1.6.8</jakarta-mail.version>
+    <!-- T-4.6: Boot manages the implementation com.sun.mail:jakarta.mail with its own property sun-mail.version -->
+    <sun-mail.version>1.6.8</sun-mail.version>
     <!-- ADR-004 s6: transitive of spring-security-oauth2-jose -->
     <nimbus-jose-jwt.version>9.48</nimbus-jose-jwt.version>
     <!-- ADR-004 s6: transitive of elasticsearch-java -->
@@ -75,8 +77,12 @@
     <lz4-java.version>1.11.4</lz4-java.version>
     <!-- ADR-004 s6: org.lz4:lz4-java 1.8.1 is a Sonatype relocation POM to at.yawk.lz4:lz4-java; managing it makes Maven follow the relocation for kafka-clients etc. (instead of excluding lz4, which would leave Kafka without lz4) -->
     <lz4-java-relocation.version>1.8.1</lz4-java-relocation.version>
-    <!-- ADR-004 s6: transitive of Undertow -->
-    <xnio.version>3.8.16.Final</xnio.version>
+    <!-- ADR-004 s6: transitive of Undertow. T-4.5.15: pinned to 3.8.14 (CVE-2023-5685 fixed in 3.8.14). xnio 3.8.15+ (incl. 3.8.16
+         declared by Undertow 2.2.41) hangs forever in NioTcpServer.close/WorkerThread.cancelKey when Undertow stops after a failed
+         secondary-connector bind, so an app whose port is in use hangs at startup instead of failing (Boot's
+         UndertowServletWebServerFactoryTests#portClashOfSecondaryConnectorResultsInPortInUseException: 3.8.7/3.8.8/3.8.14 pass,
+         3.8.15/3.8.16/3.8.17 hang). No advisory open against 3.8.14 (OSV 2026-11-21). -->
+    <xnio.version>3.8.14.Final</xnio.version>
     <!-- T-4.5.7: log4j-to-slf4j 2.22+ DECLARES slf4j-api 2.0.x (it still runs on 1.7 at runtime, support range [1.7,3), but a Gradle consumer resolves the declared 2.0.x, which Boot 2.7's logback 1.2 cannot bind: logging silently dead). 2.21.1 is the last release that declares slf4j-api 1.7.36. Only the bridge is pinned: log4j-api/-core/-jul/-slf4j-impl stay on log4j2.version (the CVEs are in log4j-api/-core, not in the bridge) -->
     <log4j-to-slf4j.version>2.21.1</log4j-to-slf4j.version>
     <!-- T-4.5.10: jackson-module-kotlin 2.18.x ships Kotlin 1.8.0 metadata, which the Kotlin 1.6.21 compiler of Boot 2.7 cannot read (every Kotlin 1.6 module that has it on the compile classpath fails). 2.17.3 ships 1.7.1 metadata (readable by 1.6.x) and runs on jackson-databind/-core 2.18.12 (verified with the webflux-kotlin-coroutines compat app). No CVE is open against this module -->
@@ -422,6 +428,13 @@
         <groupId>jakarta.mail</groupId>
         <artifactId>jakarta.mail-api</artifactId>
         <version>${jakarta-mail.version}</version>
+      </dependency>
+      <dependency>
+        <!-- CVE-2025-7962 (SMTP CR/LF injection) is fixed in the implementation: spring-boot-starter-mail depends on
+             com.sun.mail:jakarta.mail, so it must be managed too (T-4.6 finding: only the API was bumped) -->
+        <groupId>com.sun.mail</groupId>
+        <artifactId>jakarta.mail</artifactId>
+        <version>${sun-mail.version}</version>
       </dependency>
       <dependency>
         <groupId>org.quartz-scheduler</groupId>
