@@ -41,6 +41,9 @@ OVERRIDES = [
     ("freemarker.version", "2.3.35", "ADR-004"),
     ("assertj.version", "3.27.7", "ADR-004 (test scope)"),
     ("jakarta-mail.version", "1.6.8", "ADR-004"),
+    ("sun-mail.version", "1.6.8",
+     "T-4.6: CVE-2025-7962 (SMTP CR/LF injection) is fixed in the implementation com.sun.mail:jakarta.mail, which Boot versions "
+     "with sun-mail.version (spring-boot-starter-mail depends on it; only the API was bumped before)"),
 ]
 # properties Boot 2.7.18 does not have (transitive-only artifacts, ADR-004 section 6)
 NEW_PROPS = [
@@ -51,7 +54,11 @@ NEW_PROPS = [
     ("lz4-java-relocation.version", "1.8.1",
      "ADR-004 s6: org.lz4:lz4-java 1.8.1 is a Sonatype relocation POM to at.yawk.lz4:lz4-java; managing it makes Maven follow "
      "the relocation for kafka-clients etc. (instead of excluding lz4, which would leave Kafka without lz4)"),
-    ("xnio.version", "3.8.16.Final", "ADR-004 s6: transitive of Undertow"),
+    ("xnio.version", "3.8.14.Final",
+     "ADR-004 s6: transitive of Undertow. T-4.5.15: pinned to 3.8.14 (CVE-2023-5685 fixed in 3.8.14). xnio 3.8.15+ (incl. 3.8.16 "
+     "declared by Undertow 2.2.41) hangs forever in NioTcpServer.close/WorkerThread.cancelKey when Undertow stops after a failed "
+     "secondary-connector bind, so an app whose port is in use hangs at startup instead of failing (3.8.7/3.8.8/3.8.14 pass, "
+     "3.8.15/3.8.16/3.8.17 hang). No advisory open against 3.8.14 (OSV 2026-11-21)"),
     ("log4j-to-slf4j.version", "2.21.1",
      "T-4.5.7: log4j-to-slf4j 2.22+ DECLARES slf4j-api 2.0.x (it still runs on 1.7 at runtime, support range [1.7,3), but a Gradle consumer "
      "resolves the declared 2.0.x, which Boot 2.7's logback 1.2 cannot bind: logging silently dead). 2.21.1 is the last release that "
@@ -177,7 +184,11 @@ def main(boot_pom, out):
             "  <url>https://github.com/ltsboot/bom</url>",
             "  <licenses><license><name>Apache License, Version 2.0</name>"
             "<url>https://www.apache.org/licenses/LICENSE-2.0</url></license></licenses>",
-            "  <scm><url>https://github.com/ltsboot/bom</url></scm>", "",
+            "  <developers><developer><id>ltsboot</id><name>The ltsboot contributors</name>"
+            "<url>https://github.com/ltsboot</url></developer></developers>",
+            "  <scm><connection>scm:git:https://github.com/ltsboot/bom.git</connection>"
+            "<developerConnection>scm:git:git@github.com:ltsboot/bom.git</developerConnection>"
+            "<url>https://github.com/ltsboot/bom</url></scm>", "",
             "  <properties>", props_xml(bom_props), "  </properties>", "",
             "  <dependencyManagement>", "    <dependencies>",
             "      <!-- Direct entries override every imported BOM. Imports below come BEFORE Boot's BOM, so they win too. -->"]
@@ -212,7 +223,11 @@ def main(boot_pom, out):
          "  <url>https://github.com/ltsboot/bom</url>",
          "  <licenses><license><name>Apache License, Version 2.0</name>"
          "<url>https://www.apache.org/licenses/LICENSE-2.0</url></license></licenses>",
-         "  <scm><url>https://github.com/ltsboot/bom</url></scm>", "",
+         "  <developers><developer><id>ltsboot</id><name>The ltsboot contributors</name>"
+            "<url>https://github.com/ltsboot</url></developer></developers>",
+            "  <scm><connection>scm:git:https://github.com/ltsboot/bom.git</connection>"
+            "<developerConnection>scm:git:git@github.com:ltsboot/bom.git</developerConnection>"
+            "<url>https://github.com/ltsboot/bom</url></scm>", "",
          "  <properties>", props_xml(all_props), "  </properties>", "",
          "  <dependencyManagement>", "    <dependencies>"]
     for e in parent_dm:
